@@ -1,23 +1,52 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { TodoForm } from "./Components/TodoForm";
+import { Todo } from "./Components/Todo";
+import "./App.css";
 
 function App() {
+  const [todos, setTodos] = useState([]);
+  const [status, setStatus] = useState("All");
+  const [toggle, setToggle] = useState(false);
+
+  const handleRemoveCompleteTodo = () => {
+    setTodos(todos.filter(value => !value.complete));
+  };
+
+  const handleToggleAll = () => {
+    setTodos(todos.map(value => ({ ...value, complete: toggle })));
+    setToggle(!toggle);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h4>TO DO LIST</h4>
+      <TodoForm onSubmit={setTodos} />
+      <ul>
+        {todos.map(value => (
+          <Todo
+            key={value.id}
+            todo={value}
+            setTodos={setTodos}
+            status={status}
+          />
+        ))}
+      </ul>
+
+      <button onClick={() => setStatus("All")}>All</button>
+      <button onClick={() => setStatus("Active")}>Active</button>
+      <button onClick={() => setStatus("Completed")}>Completed</button>
+      <div>
+        {todos.some(value =>
+          value.complete ? (
+            <button onClick={handleRemoveCompleteTodo}>
+              Remove All Complete todos
+            </button>
+          ) : null
+        )}
+        <button onClick={handleToggleAll}>
+          Toggle all complete: {`${toggle}`}
+        </button>
+      </div>
     </div>
   );
 }
